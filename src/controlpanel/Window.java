@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -57,7 +58,7 @@ public class Window extends JFrame {
 		super(title);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new FlowLayout());
-		this.setSize(600, 400);
+		this.setSize(400, 650);
 		this.ntc = ntc;
 		isActive = false;
 		currentAuto = -1;
@@ -72,21 +73,21 @@ public class Window extends JFrame {
 		 * THE ORDER MATTERS. It determines the value sent to the table
 		 */
 		buttons = new MyButton[] {
-			nothing = createSimpleButton("Nothing"), 						//0
-			center = createSimpleButton("Center"), 							//1
-			leftSwitchOnly = createSimpleButton("Left Switch"),				//2
-			rightSwitchOnly = createSimpleButton("Right Switch"), 			//3
-			leftScalePriority = createSimpleButton("L Scale Priority"), 	//4
-			rightScalePriority = createSimpleButton("R Scale Priority"), 	//5
-			leftSwitchPriority = createSimpleButton("L Switch Priority"), 	//6
-			rightSwitchPriority = createSimpleButton("R Switch Priority"), 	//7
-			driveForward = createSimpleButton("Drive Forward"), 			//8
-			leftTwoCubeScale = createSimpleButton("L Two Cube Scale Priority"),
-			leftTwoCubeSwitch = createSimpleButton("L Two Cube Switch Priority"),
-			extra11 = createSimpleButton("Test"),
-			rightTwoCubeSwitch = createSimpleButton("R Two Cube Switch Priority"),
-			rightTwoCubeScale = createSimpleButton("R Two Cube Scale Priority"),
-			extra14 = createSimpleButton("Test")
+			nothing = createSimpleButton("Nothing"), 								//0
+			center = createSimpleButton("Center"), 									//1
+			leftSwitchOnly = createSimpleButton("Left Switch Only"),				//2
+			rightSwitchOnly = createSimpleButton("Right Switch Only"), 				//3
+			leftScalePriority = createSimpleButton("L Scale Priority"), 			//4
+			rightScalePriority = createSimpleButton("R Scale Priority"),		 	//5
+			leftSwitchPriority = createSimpleButton("L Switch Priority"), 			//6
+			rightSwitchPriority = createSimpleButton("R Switch Priority"), 			//7
+			driveForward = createSimpleButton("Drive Forward"), 					//8
+			leftTwoCubeScale = createSimpleButton("L Two Cube Scale Priority"),		//9
+			leftTwoCubeSwitch = createSimpleButton("L Two Cube Switch Priority"),	//10
+			extra11 = createSimpleButton("Test"),									//11
+			rightTwoCubeSwitch = createSimpleButton("R Two Cube Switch Priority"),	//12
+			rightTwoCubeScale = createSimpleButton("R Two Cube Scale Priority"),	//13
+			extra14 = createSimpleButton("Test")									//14
 		};
 		
 		//When each button is pressed, the corresponding value is sent to the network table
@@ -107,8 +108,9 @@ public class Window extends JFrame {
 		rightPanel = new JPanel(new GridLayout(5, 1));
 		messagePanel = new JPanel(new GridLayout(1, 1));
 		topHalf = new JPanel(new GridLayout(1, 3));
+		topHalf.setPreferredSize(new Dimension(1000, 1000));
 		messagePanel.setBackground(Color.WHITE);
-		messagePanel.setPreferredSize(new Dimension(100, 100));
+		messagePanel.setPreferredSize(new Dimension(800, 120));
 				
 		//Adding all the components to their respective panels
 		leftPanel.add(leftTwoCubeScale);
@@ -133,13 +135,10 @@ public class Window extends JFrame {
 		topHalf.add(rightPanel);
 		
 		//Adding all JPanels to the JFrame
-		this.setLayout(new FlowLayout());
+		this.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		this.add(topHalf);
 		this.add(messagePanel);
 		this.setVisible(true);
-		
-		//Initialize FileLogger
-		//fileLogger = new FileLogger(filePath);
 		
 		//Start checking for connectivity
 		updateDisplay();
