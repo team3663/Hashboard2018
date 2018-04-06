@@ -35,6 +35,8 @@ public class Window extends JFrame {
 	private MyButton rightTwoCubeSwitch;
 	private MyButton rightTwoCubeScale;
 	private MyButton extra14;
+	private MyButton leftEitherScale;
+	private MyButton rightEitherScale;
 	private MyButton[] buttons;
 	private NetTableControl ntc;
 	private JPanel leftPanel;
@@ -49,9 +51,6 @@ public class Window extends JFrame {
 	final int pingDelay;		//Check if we're still connected every 1 second
 	private static Color LIGHT_RED;
 	private static Color LIGHT_GREEN;
-	
-//	private String filePath = "%userprofile%\\documents\\logFiles\\";
-//	private FileLogger fileLogger;
 	
 	public Window(String title, NetTableControl ntc) {
 		//Initialize all the things
@@ -87,7 +86,9 @@ public class Window extends JFrame {
 			extra11 = createSimpleButton("Test"),									//11
 			rightTwoCubeSwitch = createSimpleButton("R Two Cube Switch Priority"),	//12
 			rightTwoCubeScale = createSimpleButton("R Two Cube Scale Priority"),	//13
-			extra14 = createSimpleButton("Test")									//14
+			extra14 = createSimpleButton("Test"),									//14
+			leftEitherScale = createSimpleButton("L Both Scale"),					//15
+			rightEitherScale = createSimpleButton("R Both Scale")					//16
 		};
 		
 		//When each button is pressed, the corresponding value is sent to the network table
@@ -103,9 +104,9 @@ public class Window extends JFrame {
 		message.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		//Initialize JPanels
-		leftPanel = new JPanel(new GridLayout(5, 1));
+		leftPanel = new JPanel(new GridLayout(6, 1));
 		middlePanel = new JPanel(new GridLayout(5, 1));
-		rightPanel = new JPanel(new GridLayout(5, 1));
+		rightPanel = new JPanel(new GridLayout(6, 1));
 		messagePanel = new JPanel(new GridLayout(1, 1));
 		topHalf = new JPanel(new GridLayout(1, 3));
 		topHalf.setPreferredSize(new Dimension(1000, 1000));
@@ -113,11 +114,13 @@ public class Window extends JFrame {
 		messagePanel.setPreferredSize(new Dimension(800, 120));
 				
 		//Adding all the components to their respective panels
+		leftPanel.add(leftEitherScale);
 		leftPanel.add(leftTwoCubeScale);
 		leftPanel.add(leftTwoCubeSwitch);
 		leftPanel.add(leftScalePriority);
 		leftPanel.add(leftSwitchPriority);
 		leftPanel.add(leftSwitchOnly);
+		rightPanel.add(rightEitherScale);
 		rightPanel.add(rightTwoCubeScale);
 		rightPanel.add(rightTwoCubeSwitch);
 		rightPanel.add(rightScalePriority);
