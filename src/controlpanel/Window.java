@@ -57,7 +57,7 @@ public class Window extends JFrame {
 		super(title);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new FlowLayout());
-		this.setSize(400, 650);
+		this.setSize(400, 661);
 		this.ntc = ntc;
 		isActive = false;
 		currentAuto = -1;
@@ -74,8 +74,8 @@ public class Window extends JFrame {
 		buttons = new MyButton[] {
 			nothing = createSimpleButton("Nothing"), 								//0
 			center = createSimpleButton("Center"), 									//1
-			leftSwitchOnly = createSimpleButton("Left Switch Only"),				//2
-			rightSwitchOnly = createSimpleButton("Right Switch Only"), 				//3
+			leftSwitchOnly = createSimpleButton("L Switch Only"),					//2
+			rightSwitchOnly = createSimpleButton("R Switch Only"), 					//3
 			leftScalePriority = createSimpleButton("L Scale Priority"), 			//4
 			rightScalePriority = createSimpleButton("R Scale Priority"),		 	//5
 			leftSwitchPriority = createSimpleButton("L Switch Priority"), 			//6
@@ -87,8 +87,8 @@ public class Window extends JFrame {
 			rightTwoCubeSwitch = createSimpleButton("R Two Cube Switch Priority"),	//12
 			rightTwoCubeScale = createSimpleButton("R Two Cube Scale Priority"),	//13
 			extra14 = createSimpleButton("Test"),									//14
-			leftEitherScale = createSimpleButton("L Both Scale"),					//15
-			rightEitherScale = createSimpleButton("R Both Scale")					//16
+			leftEitherScale = createSimpleButton("L Choose Scale"),					//15
+			rightEitherScale = createSimpleButton("R Choose Scale")					//16
 		};
 		
 		//When each button is pressed, the corresponding value is sent to the network table
@@ -104,12 +104,13 @@ public class Window extends JFrame {
 		message.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		//Initialize JPanels
-		leftPanel = new JPanel(new GridLayout(6, 1));
-		middlePanel = new JPanel(new GridLayout(5, 1));
-		rightPanel = new JPanel(new GridLayout(6, 1));
+		leftPanel = new JPanel();
+		middlePanel = new JPanel();
+		rightPanel = new JPanel();
 		messagePanel = new JPanel(new GridLayout(1, 1));
-		topHalf = new JPanel(new GridLayout(1, 3));
+		topHalf = new JPanel();
 		topHalf.setPreferredSize(new Dimension(1000, 1000));
+		topHalf.setBackground(Color.BLACK);
 		messagePanel.setBackground(Color.WHITE);
 		messagePanel.setPreferredSize(new Dimension(800, 120));
 				
@@ -120,22 +121,30 @@ public class Window extends JFrame {
 		leftPanel.add(leftScalePriority);
 		leftPanel.add(leftSwitchPriority);
 		leftPanel.add(leftSwitchOnly);
-		rightPanel.add(rightEitherScale);
-		rightPanel.add(rightTwoCubeScale);
-		rightPanel.add(rightTwoCubeSwitch);
-		rightPanel.add(rightScalePriority);
-		rightPanel.add(rightSwitchPriority);
-		rightPanel.add(rightSwitchOnly);
 		middlePanel.add(extra14);
 		middlePanel.add(extra11);
 		middlePanel.add(nothing);
 		middlePanel.add(driveForward);
 		middlePanel.add(center);
 		messagePanel.add(message);
+		rightPanel.add(rightEitherScale);
+		rightPanel.add(rightTwoCubeScale);
+		rightPanel.add(rightTwoCubeSwitch);
+		rightPanel.add(rightScalePriority);
+		rightPanel.add(rightSwitchPriority);
+		rightPanel.add(rightSwitchOnly);
 		
 		topHalf.add(leftPanel);
 		topHalf.add(middlePanel);
 		topHalf.add(rightPanel);
+		
+		leftPanel.setLayout(new GridLayout(leftPanel.getComponentCount(), 1));
+		middlePanel.setLayout(new GridLayout(middlePanel.getComponentCount(), 1));
+		rightPanel.setLayout(new GridLayout(rightPanel.getComponentCount(), 1));
+		GridLayout topHalfLayout = new GridLayout(1, topHalf.getComponentCount());
+		topHalfLayout.setHgap(4);
+		topHalf.setLayout(topHalfLayout);
+		
 		
 		//Adding all JPanels to the JFrame
 		this.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -238,7 +247,6 @@ public class Window extends JFrame {
 	private void changeSelectedAuto(int p) {
 		//Update the network table
 		ntc.sendAutoChoice(p);
-		//fileLogger.writeLine("Sent: " + p + " to the Network Table");
 		
 		//Update our current pos
 		currentAuto = p;
