@@ -17,6 +17,18 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.LineBorder;
 
+/**
+ * README ************************************************
+ * *******************************************************
+ * There will be 3 rows: position (0), primary (1), and secondary (2)
+ * Each row will have a set of MyButtons
+ * Each MyButton in each row will be numbered 0 to n
+ * There can only be one button selected in each row
+ * If a button is pushed, and there is a button selected for every row, send the selection to the networkTable
+ * The number that will be sent will be (position * 100 + primary * 10 + secondary)
+ * For instance: If you have position[1], primary[2], and secondary[5] selected, it will send the number 125 to the networkTable
+ * I realize that this will require changes in the robot code. I couldn't think of another way to do it.
+ */
 @SuppressWarnings("serial")
 public class Window extends JFrame {
 	private boolean isActive;	//If we're connected to the robot
@@ -38,8 +50,11 @@ public class Window extends JFrame {
 	private MyButton extra14;
 	private MyButton leftEitherScale;
 	private MyButton rightEitherScale;
+	
+	//TODO: Make this 3 button arrays
+	// position[], primary[], secondary[]
 	private MyButton[] buttons;
-	//
+
 	private NetTableControl ntc;
 	private JPanel positionPanel;
 	private JPanel position;
@@ -75,6 +90,7 @@ public class Window extends JFrame {
 		 * Initialize the Buttons and dd all buttons to the button array
 		 * THE ORDER MATTERS. It determines the value sent to the table
 		 */
+		//TODO: Add the buttons to their appropriate button array (delete 82 to 100)
 		buttons = new MyButton[] {
 			nothing = createSimpleButton("Nothing"), 								//0
 			center = createSimpleButton("Center"), 									//1
@@ -96,6 +112,8 @@ public class Window extends JFrame {
 		};
 		
 		//When each button is pressed, the corresponding value is sent to the network table
+		//TODO: Do this 3 times, once for each button array.
+		//The parameter for sendInput() will be 0 for position, 1 for primary, and 2 for secondary
 		for(int i = 0; i < buttons.length; i++) {
 			buttons[i].addActionListener(sendInput());
 			buttons[i].index = i;
@@ -126,6 +144,7 @@ public class Window extends JFrame {
 		messagePanel.setPreferredSize(new Dimension(800, 120));
 				
 		//Adding all the components to their respective panels
+		//TODO: Make these for each loops that add the buttons from their respective button array
 		position.add(leftEitherScale);
 		position.add(leftTwoCubeScale);
 		position.add(leftTwoCubeSwitch);
@@ -177,7 +196,7 @@ public class Window extends JFrame {
 				//Just Connected
 				if (!isActive && ntc.isConnected()) {
 					isActive = ntc.isConnected();
-					//Once connected, ping connectivity at a slower rate to reduce netowrk load
+					//Once connected, ping connectivity at a slower rate to reduce network load
 					timer.setDelay(pingDelay);
 					//If we have nothing queued
 					if (queuedAuto == -1) {
@@ -219,33 +238,25 @@ public class Window extends JFrame {
 	}
 	
 	//Action listener to send an number to the network table
-	private ActionListener sendInput() {
+	//row is: 0 for position, 1 for primary, 2 for secondary
+	//the row parameter is to differentiate between position, primary, and secondary
+	private ActionListener sendInput(int row) {
 		ActionListener temp = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				MyButton temp = (MyButton) e.getSource();
 				//If connected, change auto
 				if (isActive) {
-					//If we have another auto selected and it's not the button we pressed
-					if (currentAuto != -1 && currentAuto != temp.index) {
-						//Open a dialog to make sure they want to change
-						Object[] options = {"Change to new auto", "Keep current auto"};
-						int n = JOptionPane.showOptionDialog(null, "You have " + buttons[currentAuto].getText() + " selected\nChange to " + 
-								temp.getText() + "?", "Attention!", 
-								JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-						
-						//If they don't press "Change to new auto", do nothing
-						if (n != 0)
-							return;
-					}
-					
-					changeSelectedAuto(temp.index);
+					//TODO: Make it so it deselects the other buttons in its row/button array, then selects itself
+					//Change all the states to match. This one is 1, pressed. All others are 0, ready to be pressed
+					//TODO: Check if(something is selected in all 3 rows) then changeSelectedAuto(num);
 				}
 				//Queue an instruction
 				else {
-					queuedAuto = temp.index;
-					updateDisplay();
+					//TODO: deselect all the other buttons, and queue this one
+					//Change all states to match. This one is 4, queued. All others are 3, disconnected
 				}
+				updateDisplay();
 			}
 		};
 		return temp;
@@ -256,7 +267,6 @@ public class Window extends JFrame {
 		//Update the network table
 		ntc.sendAutoChoice(p);
 		
-		//Update our current pos
 		currentAuto = p;
 		
 		//Set the color of the buttons
@@ -264,25 +274,17 @@ public class Window extends JFrame {
 	}
 	
 	//updates the displayed number to match the Network Table
+
 	public void updateDisplay()	{		
-		if(ntc.isConnected()) {
-			if(currentAuto == -1) {
-				setAllButtonColor(Color.YELLOW);
-				setMessage("Set an Autonomous");
-			}
-			else {
-				setAllButtonColor(Color.WHITE);
-				buttons[currentAuto].setBackground(LIGHT_GREEN);
-				setMessage("AUTO: " + buttons[currentAuto].displayName);
-			}
-		}
-		else {
-			setAllButtonColor(LIGHT_RED);
-			setMessage("Connecting");
-			if(queuedAuto != -1) {
-				buttons[queuedAuto].setBackground(Color.ORANGE);
-			}
-		}
+		//TODO: Change this so that it iterates through every button and changes each
+		//one's color to match its state
+		/*
+		 * 0 Ready to be pressed	Color.WHITE
+		 * 1 Pressed				Color.LIGHT_GREEN
+		 * 2 Cannot be pressed		Color.GRAY
+		 * 3 Disconnected			Color.LIGHT_RED
+		 * 4 Queued					Color.ORANGE
+		 */
 	}
 	
 	//An easy way to create a simple-looking button
@@ -296,6 +298,7 @@ public class Window extends JFrame {
 		return button;
 	}
 
+	//TODO: delete this. updateDisplay() should do all the work for us
 	//Self explanatory
 	private void setAllButtonColor(Color c) {
 		for(MyButton mb : buttons) {
@@ -306,7 +309,6 @@ public class Window extends JFrame {
 	//Sets the label text
 	public void setMessage(String msg) {
 		message.setText(msg);
-		//fileLogger.writeLine(msg);
 	}
 	
 	//Gets the label text

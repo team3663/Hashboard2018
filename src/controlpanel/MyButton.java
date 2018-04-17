@@ -20,6 +20,6 @@ public class MyButton extends JButton {
 	public MyButton(String name) {
 		super(name);
 		displayName = name;
-		state = 0;
+		state = 3;
 	}
 }
