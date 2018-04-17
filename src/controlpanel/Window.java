@@ -20,6 +20,7 @@ import javax.swing.border.LineBorder;
 @SuppressWarnings("serial")
 public class Window extends JFrame {
 	private boolean isActive;	//If we're connected to the robot
+	//TODO: change the buttons
 	private MyButton nothing;
 	private MyButton center;
 	private MyButton leftSwitchOnly;
@@ -38,12 +39,15 @@ public class Window extends JFrame {
 	private MyButton leftEitherScale;
 	private MyButton rightEitherScale;
 	private MyButton[] buttons;
+	//
 	private NetTableControl ntc;
-	private JPanel leftPanel;
-	private JPanel middlePanel;
-	private JPanel rightPanel;
+	private JPanel positionPanel;
+	private JPanel position;
+	private JPanel primaryPanel;
+	private JPanel primary;
+	private JPanel secondaryPanel;
+	private JPanel secondary;
 	private JPanel messagePanel;
-	private JPanel topHalf;
 	private JLabel message;
 	private int currentAuto;
 	private int queuedAuto;
@@ -104,51 +108,55 @@ public class Window extends JFrame {
 		message.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		//Initialize JPanels
-		leftPanel = new JPanel();
-		middlePanel = new JPanel();
-		rightPanel = new JPanel();
+		position = new JPanel();
+		position.setPreferredSize(new Dimension(80, 90));
+		primary = new JPanel();
+		primary.setPreferredSize(new Dimension(80, 90));
+		secondary = new JPanel();
+		secondary.setPreferredSize(new Dimension(80, 90));
+		
+		positionPanel = new JPanel();
+		positionPanel.add(new JLabel("Robot Position"));
+		primaryPanel = new JPanel();
+		primaryPanel.add(new JLabel("Primary Action"));
+		secondaryPanel = new JPanel();
+		secondaryPanel.add(new JLabel("Secondary Action"));
 		messagePanel = new JPanel(new GridLayout(1, 1));
-		topHalf = new JPanel();
-		topHalf.setPreferredSize(new Dimension(1000, 1000));
-		topHalf.setBackground(Color.BLACK);
 		messagePanel.setBackground(Color.WHITE);
 		messagePanel.setPreferredSize(new Dimension(800, 120));
 				
 		//Adding all the components to their respective panels
-		leftPanel.add(leftEitherScale);
-		leftPanel.add(leftTwoCubeScale);
-		leftPanel.add(leftTwoCubeSwitch);
-		leftPanel.add(leftScalePriority);
-		leftPanel.add(leftSwitchPriority);
-		leftPanel.add(leftSwitchOnly);
-		middlePanel.add(extra14);
-		middlePanel.add(extra11);
-		middlePanel.add(nothing);
-		middlePanel.add(driveForward);
-		middlePanel.add(center);
+		position.add(leftEitherScale);
+		position.add(leftTwoCubeScale);
+		position.add(leftTwoCubeSwitch);
+		position.add(leftScalePriority);
+		position.add(leftSwitchPriority);
+		position.add(leftSwitchOnly);
+		primary.add(extra14);
+		primary.add(extra11);
+		primary.add(nothing);
+		primary.add(driveForward);
+		primary.add(center);
+		secondary.add(rightEitherScale);
+		secondary.add(rightTwoCubeScale);
+		secondary.add(rightTwoCubeSwitch);
+		secondary.add(rightScalePriority);
+		secondary.add(rightSwitchPriority);
+		secondary.add(rightSwitchOnly);
 		messagePanel.add(message);
-		rightPanel.add(rightEitherScale);
-		rightPanel.add(rightTwoCubeScale);
-		rightPanel.add(rightTwoCubeSwitch);
-		rightPanel.add(rightScalePriority);
-		rightPanel.add(rightSwitchPriority);
-		rightPanel.add(rightSwitchOnly);
-		
-		topHalf.add(leftPanel);
-		topHalf.add(middlePanel);
-		topHalf.add(rightPanel);
-		
-		leftPanel.setLayout(new GridLayout(leftPanel.getComponentCount(), 1));
-		middlePanel.setLayout(new GridLayout(middlePanel.getComponentCount(), 1));
-		rightPanel.setLayout(new GridLayout(rightPanel.getComponentCount(), 1));
-		GridLayout topHalfLayout = new GridLayout(1, topHalf.getComponentCount());
-		topHalfLayout.setHgap(4);
-		topHalf.setLayout(topHalfLayout);
-		
+				
+		position.setLayout(new GridLayout(1, position.getComponentCount()));
+		primary.setLayout(new GridLayout(1, primary.getComponentCount()));
+		secondary.setLayout(new GridLayout(1, secondary.getComponentCount()));		
 		
 		//Adding all JPanels to the JFrame
 		this.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-		this.add(topHalf);
+		this.add(positionPanel);
+		this.add(position);
+		this.add(primaryPanel);
+		this.add(primary);
+		this.add(secondaryPanel);
+		this.add(secondary);
 		this.add(messagePanel);
 		this.setVisible(true);
 		
