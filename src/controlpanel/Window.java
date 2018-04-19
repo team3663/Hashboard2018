@@ -153,20 +153,20 @@ public class Window extends JFrame {
 		//TODO: Do this 3 times, once for each button array.
 		//The parameter for sendInput() will be 0 for position, 1 for primary, and 2 for secondary
 		for(int i = 0; i < robotPos.length; i++) {
-			robotPos[i].addActionListener(sendInput(i));
+			robotPos[i].addActionListener(sendInput(0));
 			robotPos[i].index = i;
 			robotPos[i].setText("<html><center>" + robotPos[i].getText() + "<br>" + "(" + i + ")");
 		}
 		
 		
 		for(int i = 0; i < primaryTarget.length; i++) {
-			primaryTarget[i].addActionListener(sendInput(i));
+			primaryTarget[i].addActionListener(sendInput(1));
 			primaryTarget[i].index = i;
 			primaryTarget[i].setText("<html><center>" + primaryTarget[i].getText() + "<br>" + "(" + i + ")");
 		}
 		
 		for(int i = 0; i < secondaryTarget.length; i++) {
-			secondaryTarget[i].addActionListener(sendInput(i));
+			secondaryTarget[i].addActionListener(sendInput(2));
 			secondaryTarget[i].index = i;
 			secondaryTarget[i].setText("<html><center>" + secondaryTarget[i].getText() + "<br>" + "(" + i + ")");
 		}
