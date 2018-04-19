@@ -50,6 +50,8 @@ public class Window extends JFrame {
 	private MyButton secondaryDriveForward;
 	private MyButton[] secondaryTarget;
 	
+	private Color[] colors;
+	
 	/*TODO: change the buttons
 	private MyButton nothing;
 	//private MyButton center;
@@ -130,9 +132,9 @@ public class Window extends JFrame {
 		};*/
 		
 		robotPos = new MyButton[] {
-				center = createSimpleButton("Center"),                     //0
-				right = createSimpleButton("Right"),                       //1
-				left = createSimpleButton("Left")                          //2
+				left = createSimpleButton("Left"),                         //0
+				center = createSimpleButton("Center"),                     //1
+				right = createSimpleButton("Right")                        //2
 		};
 		
 		primaryTarget = new MyButton[] {
@@ -147,6 +149,18 @@ public class Window extends JFrame {
 				secondarySw = createSimpleButton("Switch"),                //1
 				secondaryNothing = createSimpleButton("Nothing"),          //2
 				secondaryDriveForward = createSimpleButton("Drive Forward")//3
+		};
+		/*0 Ready to be pressed	Color.WHITE
+		 * 1 Pressed				Color.LIGHT_GREEN
+		 * 2 Cannot be pressed		Color.GRAY
+		 * 3 Disconnected			Color.LIGHT_RED
+		 * 4 Queued					Color.ORANGE*/
+		colors = new Color[] {
+				Color.WHITE,
+				LIGHT_GREEN,
+				Color.gray,
+				LIGHT_RED,
+				Color.ORANGE
 		};
 		
 		//When each button is pressed, the corresponding value is sent to the network table
@@ -196,9 +210,9 @@ public class Window extends JFrame {
 				
 		//Adding all the components to their respective panels
 		//TODO: Make these for each loops that add the buttons from their respective button array
+		position.add(left);
 		position.add(center);
 		position.add(right);
-		position.add(left);
 		primary.add(sc);
 		primary.add(sw);
 		primary.add(nothing);
@@ -295,11 +309,49 @@ public class Window extends JFrame {
 					//TODO: Make it so it deselects the other buttons in its row/button array, then selects itself
 					//Change all the states to match. This one is 1, pressed. All others are 0, ready to be pressed
 					//TODO: Check if(something is selected in all 3 rows) then changeSelectedAuto(num);
+					switch (row) {
+						case 0:
+							for(MyButton mb : robotPos) {
+								mb.state = 0;
+							}
+							break;
+						case 1:
+							for(MyButton mb : primaryTarget) {
+								mb.state = 0;
+							}
+							break;
+						case 2:
+							for(MyButton mb : secondaryTarget) {
+								mb.state = 0;
+							}
+							break;
+					}
+					temp.state = 1;
+					updateDisplay();
 				}
 				//Queue an instruction
 				else {
 					//TODO: deselect all the other buttons, and queue this one
-					//Change all states to match. This one is 4, queued. All others are 3, disconnected
+					//Change all states to match. This one is 4, queued. All others are 3, disconnected\
+					switch (row) {
+						case 0:
+							for(MyButton mb : robotPos) {
+								mb.state = 3;
+							}
+							break;
+						case 1:
+							for(MyButton mb : primaryTarget) {
+								mb.state = 3;
+							}
+							break;
+						case 2:
+							for(MyButton mb : secondaryTarget) {
+								mb.state = 3;
+							}
+							break;
+					}
+					temp.state = 4;
+					updateDisplay();
 				}
 				updateDisplay();
 			}
@@ -330,6 +382,16 @@ public class Window extends JFrame {
 		 * 3 Disconnected			Color.LIGHT_RED
 		 * 4 Queued					Color.ORANGE
 		 */
+		
+		for(MyButton mb : robotPos) {
+			mb.setBackground(colors[mb.state]);
+		}
+		for(MyButton mb : primaryTarget) {
+			mb.setBackground(colors[mb.state]);
+		}
+		for(MyButton mb : secondaryTarget) {
+			mb.setBackground(colors[mb.state]);
+		}
 	}
 	
 	//An easy way to create a simple-looking button
