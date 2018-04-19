@@ -32,9 +32,27 @@ import javax.swing.border.LineBorder;
 @SuppressWarnings("serial")
 public class Window extends JFrame {
 	private boolean isActive;	//If we're connected to the robot
-	//TODO: change the buttons
-	private MyButton nothing;
+	
 	private MyButton center;
+	private MyButton right;
+	private MyButton left;
+	private MyButton[] robotPos;
+	
+	private MyButton sc;
+	private MyButton sw;
+	private MyButton nothing;
+	private MyButton driveForward;
+	private MyButton[] primaryTarget;
+	
+	private MyButton secondarySc;
+	private MyButton secondarySw;
+	private MyButton secondaryNothing;
+	private MyButton secondaryDriveForward;
+	private MyButton[] secondaryTarget;
+	
+	/*TODO: change the buttons
+	private MyButton nothing;
+	//private MyButton center;
 	private MyButton leftSwitchOnly;
 	private MyButton rightSwitchOnly;
 	private MyButton leftScalePriority;
@@ -53,7 +71,7 @@ public class Window extends JFrame {
 	
 	//TODO: Make this 3 button arrays
 	// position[], primary[], secondary[]
-	private MyButton[] buttons;
+	private MyButton[] buttons;*/
 
 	private NetTableControl ntc;
 	private JPanel positionPanel;
@@ -90,7 +108,7 @@ public class Window extends JFrame {
 		 * Initialize the Buttons and dd all buttons to the button array
 		 * THE ORDER MATTERS. It determines the value sent to the table
 		 */
-		//TODO: Add the buttons to their appropriate button array (delete 82 to 100)
+		/*TODO: Add the buttons to their appropriate button array (delete 82 to 100)
 		buttons = new MyButton[] {
 			nothing = createSimpleButton("Nothing"), 								//0
 			center = createSimpleButton("Center"), 									//1
@@ -109,15 +127,48 @@ public class Window extends JFrame {
 			extra14 = createSimpleButton("Test"),									//14
 			leftEitherScale = createSimpleButton("L Choose Scale"),					//15
 			rightEitherScale = createSimpleButton("R Choose Scale")					//16
+		};*/
+		
+		robotPos = new MyButton[] {
+				center = createSimpleButton("Center"),                     //0
+				right = createSimpleButton("Right"),                       //1
+				left = createSimpleButton("Left")                          //2
+		};
+		
+		primaryTarget = new MyButton[] {
+				sc = createSimpleButton("Scale"),                          //0
+				sw = createSimpleButton("Switch"),                         //1
+				nothing = createSimpleButton("Nothing"),                   //2
+				driveForward = createSimpleButton("Drive Forward")         //3
+		};
+		
+		secondaryTarget = new MyButton[] {
+				secondarySc = createSimpleButton("Scale"),                 //0
+				secondarySw = createSimpleButton("Switch"),                //1
+				secondaryNothing = createSimpleButton("Nothing"),          //2
+				secondaryDriveForward = createSimpleButton("Drive Forward")//3
 		};
 		
 		//When each button is pressed, the corresponding value is sent to the network table
 		//TODO: Do this 3 times, once for each button array.
 		//The parameter for sendInput() will be 0 for position, 1 for primary, and 2 for secondary
-		for(int i = 0; i < buttons.length; i++) {
-			buttons[i].addActionListener(sendInput());
-			buttons[i].index = i;
-			buttons[i].setText("<html><center>" + buttons[i].getText() + "<br>" + "(" + i + ")");
+		for(int i = 0; i < robotPos.length; i++) {
+			robotPos[i].addActionListener(sendInput(i));
+			robotPos[i].index = i;
+			robotPos[i].setText("<html><center>" + robotPos[i].getText() + "<br>" + "(" + i + ")");
+		}
+		
+		
+		for(int i = 0; i < primaryTarget.length; i++) {
+			primaryTarget[i].addActionListener(sendInput(i));
+			primaryTarget[i].index = i;
+			primaryTarget[i].setText("<html><center>" + primaryTarget[i].getText() + "<br>" + "(" + i + ")");
+		}
+		
+		for(int i = 0; i < secondaryTarget.length; i++) {
+			secondaryTarget[i].addActionListener(sendInput(i));
+			secondaryTarget[i].index = i;
+			secondaryTarget[i].setText("<html><center>" + secondaryTarget[i].getText() + "<br>" + "(" + i + ")");
 		}
 		
 		//Initialize Message Label. Font is large and centered
@@ -145,23 +196,17 @@ public class Window extends JFrame {
 				
 		//Adding all the components to their respective panels
 		//TODO: Make these for each loops that add the buttons from their respective button array
-		position.add(leftEitherScale);
-		position.add(leftTwoCubeScale);
-		position.add(leftTwoCubeSwitch);
-		position.add(leftScalePriority);
-		position.add(leftSwitchPriority);
-		position.add(leftSwitchOnly);
-		primary.add(extra14);
-		primary.add(extra11);
+		position.add(center);
+		position.add(right);
+		position.add(left);
+		primary.add(sc);
+		primary.add(sw);
 		primary.add(nothing);
 		primary.add(driveForward);
-		primary.add(center);
-		secondary.add(rightEitherScale);
-		secondary.add(rightTwoCubeScale);
-		secondary.add(rightTwoCubeSwitch);
-		secondary.add(rightScalePriority);
-		secondary.add(rightSwitchPriority);
-		secondary.add(rightSwitchOnly);
+		secondary.add(secondarySc);
+		secondary.add(secondarySw);
+		secondary.add(secondaryNothing);
+		secondary.add(secondaryDriveForward);
 		messagePanel.add(message);
 				
 		position.setLayout(new GridLayout(1, position.getComponentCount()));
@@ -301,7 +346,13 @@ public class Window extends JFrame {
 	//TODO: delete this. updateDisplay() should do all the work for us
 	//Self explanatory
 	private void setAllButtonColor(Color c) {
-		for(MyButton mb : buttons) {
+		for(MyButton mb : robotPos) {
+			mb.setBackground(c);
+		}
+		for(MyButton mb : primaryTarget) {
+			mb.setBackground(c);
+		}
+		for(MyButton mb : secondaryTarget) {
 			mb.setBackground(c);
 		}
 	}
