@@ -340,10 +340,16 @@ public class Window extends JFrame {
 				}
 				//While active. It detects changes (via another Window maybe) and updates
 				//the selected item accordingly
+				
 				else {
 					int tableNum = ntc.getAutoChoice();
-					if (tableNum != -1 && (getCurrentAuto() == -1 || getCurrentAuto() != tableNum)) {
-						
+					if (tableNum != -1 && encode() != tableNum) {
+						int compare = decode(tableNum);
+						currentSecondary = compare % 10;
+						compare /= 10;
+						currentPrimary = compare % 10;
+						compare /= 10;
+						currentPosition = compare % 10; 
 					}
 					updateDisplay();
 				}
@@ -415,8 +421,12 @@ public class Window extends JFrame {
 		return temp;
 	}
 	
-	private int getCurrentAuto() {
+	private int encode() {
 		return outputs.get(currentPosition * 100 + currentPrimary * 10 + currentSecondary);
+	}
+	
+	private int decode(int num) {
+		return reverse.get(num);
 	}
 	
 	//Takes in an auto number and updates the netowrk table and display
@@ -428,7 +438,7 @@ public class Window extends JFrame {
 		
 		currentAuto = p;*/
 		
-		int p = getCurrentAuto();
+		int p = encode();
 		ntc.sendAutoChoice(p);
 		
 		//Set the color of the buttons
