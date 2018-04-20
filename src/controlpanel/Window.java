@@ -8,6 +8,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -30,7 +33,7 @@ import javax.swing.border.LineBorder;
  * For instance: If you have position[1], primary[2], and secondary[5] selected, it will send the number 125 to the networkTable
  * I realize that this will require changes in the robot code. I couldn't think of another way to do it.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "unused" })
 public class Window extends JFrame {
 	private boolean isActive;	//If we're connected to the robot
 	
@@ -97,6 +100,7 @@ public class Window extends JFrame {
 	private static Color LIGHT_GREEN;
 	
 	private HashMap<Integer, Integer> outputs = new HashMap<>();
+	private HashMap<Integer, Integer> reverse = new HashMap<>();
 
 	
 	public Window(String title, NetTableControl ntc) {
@@ -185,6 +189,17 @@ public class Window extends JFrame {
 				secondaryNothing = createSimpleButton("Nothing"),          //2
 				secondaryDriveForward = createSimpleButton("Drive Forward")//3
 		};
+		
+		@SuppressWarnings("rawtypes")
+		Set set = outputs.entrySet();
+		@SuppressWarnings("rawtypes")
+		Iterator iterator = set.iterator();
+		while(iterator.hasNext()) {
+			@SuppressWarnings("rawtypes")
+			Map.Entry mentry = (Map.Entry)iterator.next();
+			reverse.put((int) mentry.getValue(), (int) mentry.getKey());
+		}
+		
 		/*0 Ready to be pressed	Color.WHITE
 		 * 1 Pressed				Color.LIGHT_GREEN
 		 * 2 Cannot be pressed		Color.GRAY
@@ -325,13 +340,13 @@ public class Window extends JFrame {
 				}
 				//While active. It detects changes (via another Window maybe) and updates
 				//the selected item accordingly
-				/*else {
+				else {
 					int tableNum = ntc.getAutoChoice();
-					if (tableNum != -1 && (currentAuto == -1 || currentAuto != tableNum)) {
-						currentAuto = tableNum;
+					if (tableNum != -1 && (getCurrentAuto() == -1 || getCurrentAuto() != tableNum)) {
+						
 					}
 					updateDisplay();
-				}*/
+				}
 			}
 		});
 		timer.start();
@@ -400,6 +415,10 @@ public class Window extends JFrame {
 		return temp;
 	}
 	
+	private int getCurrentAuto() {
+		return outputs.get(currentPosition * 100 + currentPrimary * 10 + currentSecondary);
+	}
+	
 	//Takes in an auto number and updates the netowrk table and display
 	private void changeSelectedAuto() {
 		//TODO: 
@@ -409,7 +428,7 @@ public class Window extends JFrame {
 		
 		currentAuto = p;*/
 		
-		int p = outputs.get(currentPosition * 100 + currentPrimary * 10 + currentSecondary);
+		int p = getCurrentAuto();
 		ntc.sendAutoChoice(p);
 		
 		//Set the color of the buttons
