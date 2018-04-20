@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -84,12 +85,19 @@ public class Window extends JFrame {
 	private JPanel secondary;
 	private JPanel messagePanel;
 	private JLabel message;
-	private int currentAuto;
-	private int queuedAuto;
+	private int currentPosition;
+	private int currentPrimary;
+	private int currentSecondary;
+	private int queuedPosition;
+	private int queuedPrimary;
+	private int queuedSecondary;
 	final int connectingDelay;	//Attempt to connect to robot every half second
 	final int pingDelay;		//Check if we're still connected every 1 second
 	private static Color LIGHT_RED;
 	private static Color LIGHT_GREEN;
+	
+	private HashMap<Integer, Integer> outputs = new HashMap<>();
+
 	
 	public Window(String title, NetTableControl ntc) {
 		//Initialize all the things
@@ -99,12 +107,39 @@ public class Window extends JFrame {
 		this.setSize(400, 661);
 		this.ntc = ntc;
 		isActive = false;
-		currentAuto = -1;
-		queuedAuto = -1;
+		currentPosition = -1;
+		currentPrimary = -1;
+		currentSecondary = -1;
+		queuedPosition = -1;
+		queuedPrimary = -1;
+		queuedSecondary = -1;
 		pingDelay = 1500;	
 		connectingDelay = 500;
 		LIGHT_RED = Color.getHSBColor(0.0F, 0.7F, 1.0F);
 		LIGHT_GREEN = Color.getHSBColor(0.3F, 0.6F, 1.0F);
+		
+		outputs.put(000, 15);
+		outputs.put(001, 4);
+		outputs.put(002, 4);
+		outputs.put(003, 4);
+		outputs.put(010, 6);
+		outputs.put(011, 2);
+		outputs.put(012, 2);
+		outputs.put(013, 2);
+		outputs.put(022, 0);
+		outputs.put(033, 8);
+		outputs.put(111, 1);
+		outputs.put(122, 0);
+		outputs.put(200, 16);
+		outputs.put(201, 5);
+		outputs.put(202, 5);
+		outputs.put(203, 5);
+		outputs.put(210, 7);
+		outputs.put(211, 3);
+		outputs.put(212, 3);
+		outputs.put(213, 3);
+		outputs.put(222, 0);
+		outputs.put(233, 8);
 
 		/**
 		 * Initialize the Buttons and dd all buttons to the button array
@@ -258,21 +293,27 @@ public class Window extends JFrame {
 					//Once connected, ping connectivity at a slower rate to reduce network load
 					timer.setDelay(pingDelay);
 					//If we have nothing queued
-					if (queuedAuto == -1) {
+					if (queuedPosition == -1 && queuedPrimary == -1 && queuedSecondary == -1) {
 						updateDisplay();
 					}
 					//Set the thing to the queued thing
 					else {
-						changeSelectedAuto(queuedAuto);
-						queuedAuto = -1;
+						changeSelectedAuto();
+						queuedPosition = -1;
+						queuedPrimary = -1;
+						queuedSecondary = -1;
 					}
 				}
 				//Just Disconnected. It queues your current selection 
 				else if (isActive && !ntc.isConnected()) {
 					isActive = ntc.isConnected();
-					if (currentAuto != -1) {
-						queuedAuto = currentAuto;
-						currentAuto = -1;
+					if (currentPosition != -1 && currentPrimary != -1 && currentSecondary != -1) {
+						queuedPosition = currentPosition;
+						queuedPrimary = currentPrimary;
+						queuedSecondary = currentSecondary;
+						currentPosition = -1;
+						currentPrimary = -1;
+						currentSecondary = -1;
 					}
 					updateDisplay();
 				}
@@ -284,13 +325,13 @@ public class Window extends JFrame {
 				}
 				//While active. It detects changes (via another Window maybe) and updates
 				//the selected item accordingly
-				else {
+				/*else {
 					int tableNum = ntc.getAutoChoice();
 					if (tableNum != -1 && (currentAuto == -1 || currentAuto != tableNum)) {
 						currentAuto = tableNum;
 					}
 					updateDisplay();
-				}
+				}*/
 			}
 		});
 		timer.start();
@@ -360,11 +401,16 @@ public class Window extends JFrame {
 	}
 	
 	//Takes in an auto number and updates the netowrk table and display
-	private void changeSelectedAuto(int p) {
+	private void changeSelectedAuto() {
+		//TODO: 
 		//Update the network table
-		ntc.sendAutoChoice(p);
 		
-		currentAuto = p;
+		/*ntc.sendAutoChoice(p);
+		
+		currentAuto = p;*/
+		
+		int p = outputs.get(currentPosition * 100 + currentPrimary * 10 + currentSecondary);
+		ntc.sendAutoChoice(p);
 		
 		//Set the color of the buttons
 		updateDisplay();
