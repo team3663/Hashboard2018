@@ -30,7 +30,7 @@ public class NetTableControl {
 	
 	//Returns true if the DS is connected to the Field? Robot? Actually not sure
 	public boolean isConnected() {
-		return nti.isConnected();
+		return true; //nti.isConnected();
 	}
 	
 	//Returns the value from the Network Table. Returns -1 if it's not found

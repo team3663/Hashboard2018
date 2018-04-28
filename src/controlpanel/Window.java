@@ -46,6 +46,7 @@ public class Window extends JFrame {
 	private MyButton sw;
 	private MyButton nothing;
 	private MyButton driveForward;
+	private MyButton twoCubeSc;
 	private MyButton[] primaryTarget;
 	
 	private MyButton secondarySc;
@@ -177,14 +178,15 @@ public class Window extends JFrame {
 		};
 		
 		primaryTarget = new MyButton[] {
-				sc = createSimpleButton("Scale"),                          //0
+				sc = createSimpleButton("Near Scale"),                     //0
 				sw = createSimpleButton("Switch"),                         //1
 				nothing = createSimpleButton("Nothing"),                   //2
-				driveForward = createSimpleButton("Drive Forward")         //3
+				driveForward = createSimpleButton("Drive Forward"),        //3
+				twoCubeSc = createSimpleButton("Two Cube Scale")           //4
 		};
 		
 		secondaryTarget = new MyButton[] {
-				secondarySc = createSimpleButton("Scale"),                 //0
+				secondarySc = createSimpleButton("Far Scale"),             //0
 				secondarySw = createSimpleButton("Switch"),                //1
 				secondaryNothing = createSimpleButton("Nothing"),          //2
 				secondaryDriveForward = createSimpleButton("Drive Forward")//3
@@ -260,17 +262,15 @@ public class Window extends JFrame {
 				
 		//Adding all the components to their respective panels
 		//TODO: Make these for each loops that add the buttons from their respective button array
-		position.add(left);
-		position.add(center);
-		position.add(right);
-		primary.add(sc);
-		primary.add(sw);
-		primary.add(nothing);
-		primary.add(driveForward);
-		secondary.add(secondarySc);
-		secondary.add(secondarySw);
-		secondary.add(secondaryNothing);
-		secondary.add(secondaryDriveForward);
+		for(MyButton mb : robotPos) {
+			position.add(mb);
+		}
+		for(MyButton mb : primaryTarget) {
+			primary.add(mb);
+		}
+		for(MyButton mb : secondaryTarget) {
+			secondary.add(mb);
+		}
 		messagePanel.add(message);
 				
 		position.setLayout(new GridLayout(1, position.getComponentCount()));
@@ -289,6 +289,7 @@ public class Window extends JFrame {
 		this.setVisible(true);
 		
 		//Start checking for connectivity
+		setMessage("Connecting");
 		updateDisplay();
 		checkConnection(connectingDelay);
 	}
@@ -309,20 +310,28 @@ public class Window extends JFrame {
 					timer.setDelay(pingDelay);
 					//If we have nothing queued
 					if (queuedPosition == -1 && queuedPrimary == -1 && queuedSecondary == -1) {
-						updateDisplay();
+						setAllButtonState(0);
 					}
 					//Set the thing to the queued thing
 					else {
+						currentPosition = queuedPosition;
+						currentPrimary = queuedPrimary;
+						currentSecondary = queuedSecondary;
 						changeSelectedAuto();
 						queuedPosition = -1;
 						queuedPrimary = -1;
 						queuedSecondary = -1;
+						setAllButtonState(0);
+						robotPos[currentPosition].state = 1;
+						primaryTarget[currentPrimary].state = 1;
+						secondaryTarget[currentSecondary].state = 1;
 					}
+					updateDisplay();
 				}
 				//Just Disconnected. It queues your current selection 
 				else if (isActive && !ntc.isConnected()) {
 					isActive = ntc.isConnected();
-					if (currentPosition != -1 && currentPrimary != -1 && currentSecondary != -1) {
+					if (currentPosition != -1 || currentPrimary != -1 || currentSecondary != -1) {
 						queuedPosition = currentPosition;
 						queuedPrimary = currentPrimary;
 						queuedSecondary = currentSecondary;
@@ -350,8 +359,8 @@ public class Window extends JFrame {
 						currentPrimary = compare % 10;
 						compare /= 10;
 						currentPosition = compare % 10; 
+						updateDisplay();
 					}
-					updateDisplay();
 				}
 			}
 		});
@@ -389,6 +398,9 @@ public class Window extends JFrame {
 							break;
 					}
 					temp.state = 1;
+					if (currentPosition != -1 && currentPrimary != -1 && currentSecondary != -1) {
+						changeSelectedAuto();
+					}
 					updateDisplay();
 				}
 				//Queue an instruction
@@ -440,6 +452,7 @@ public class Window extends JFrame {
 		
 		int p = encode();
 		ntc.sendAutoChoice(p);
+		setMessage(p + " - " + primaryTarget[currentPrimary].displayName + "then" + secondaryTarget[currentSecondary].displayName);
 		
 		//Set the color of the buttons
 		updateDisplay();
@@ -482,15 +495,15 @@ public class Window extends JFrame {
 
 	//TODO: delete this. updateDisplay() should do all the work for us
 	//Self explanatory
-	private void setAllButtonColor(Color c) {
+	private void setAllButtonState(int c) {
 		for(MyButton mb : robotPos) {
-			mb.setBackground(c);
+			mb.state = c;
 		}
-		for(MyButton mb : primaryTarget) {
-			mb.setBackground(c);
+		for(MyButton MB : primaryTarget) {
+			MB.state = c;
 		}
-		for(MyButton mb : secondaryTarget) {
-			mb.setBackground(c);
+		for(MyButton mB : secondaryTarget) {
+			mB.state = c;
 		}
 	}
 
